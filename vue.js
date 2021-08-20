@@ -1,20 +1,20 @@
 class Vue {
   constructor(config) {
     this.el = document.querySelector(config.el);
-		this.$data = config.data;
+    this.$data = config.data;
 
-		if (config.mounted) {
-			this.$mount = config.mounted;
-		}
+    if (config.mounted) {
+      this.$mount = config.mounted;
+    }
 
-		config.created?.();
+    config.created?.();
 
-		const render = renderVue(this);
-		render();
+    const render = renderVue(this);
+    render();
 
-		walkDataProps(this, render);
-		walkMethods(this, config.methods);
-		this.$mount?.();
+    walkDataProps(this, render);
+    walkMethods(this, config.methods);
+    this.$mount?.();
   }
 }
 
@@ -26,16 +26,16 @@ class Vue {
  * @returns {() => void}
  */
 function renderVue(vue) {
-	const originalInnerHTML = vue.el.innerHTML;
+  const originalInnerHTML = vue.el.innerHTML;
 
-	return () => {
-		const { $data } = vue;
+  return () => {
+    const { $data } = vue;
 
-		vue.el.innerHTML = originalInnerHTML.replace(
-			/\{\{((?:.|\r?\n)+?)\}\}/g,
-			(_, val) => $data[val.trim()]
-		);
-	}
+    vue.el.innerHTML = originalInnerHTML.replace(
+      /\{\{((?:.|\r?\n)+?)\}\}/g,
+      (_, val) => $data[val.trim()]
+    );
+  };
 }
 
 //#endregion
@@ -48,10 +48,10 @@ function renderVue(vue) {
  * @param {Function} cb
  */
 function walkDataProps(vue, cb) {
-	for (const key in vue.$data) {
-		defineReactive(vue, key, cb);
-		defineReactive(vue, key, cb, true);
-	}
+  for (const key in vue.$data) {
+    defineReactive(vue, key, cb);
+    defineReactive(vue, key, cb, true);
+  }
 }
 
 /**
@@ -62,28 +62,27 @@ function walkDataProps(vue, cb) {
  * @param {boolean} redefineData
  */
 function defineReactive(obj, key, cb, redefineData) {
-	let value = obj.$data[key];
+  let value = obj.$data[key];
 
-	Object.defineProperty(redefineData ? obj.$data : obj, key, {
-		get() {
-			return value;
-		},
-		set(newValue) {
-			if (value === newValue) return;
-			value = newValue;
+  Object.defineProperty(redefineData ? obj.$data : obj, key, {
+    get() {
+      return value;
+    },
+    set(newValue) {
+      if (value === newValue) return;
+      value = newValue;
 
-			if (!redefineData) {
-				obj.$data[key] = value;
-			}
-			else {
-				obj[key] = value;
-			}
+      if (!redefineData) {
+        obj.$data[key] = value;
+      } else {
+        obj[key] = value;
+      }
 
-			if (!redefineData) {
-				cb();
-			}
-		}
-	})
+      if (!redefineData) {
+        cb();
+      }
+    },
+  });
 }
 
 //#endregion
@@ -91,9 +90,9 @@ function defineReactive(obj, key, cb, redefineData) {
 //#region methods
 
 function walkMethods(vue, methods) {
-	for (const key in methods) {
-		vue[key] = methods[key];
-	}
+  for (const key in methods) {
+    vue[key] = methods[key];
+  }
 }
 
 //#endregion

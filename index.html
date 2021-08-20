@@ -1,42 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Vue</title>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue</title>
+  </head>
 
-<body>
-	<div id="app">
-		<h1>{{ msg }}</h1>
-		<span>{{ counter }}</span>
-		<button onclick="vm.addCounter()">Click</button>
-	</div>
-</body>
+  <body>
+    <div id="app">
+      <h1>{{ msg }}</h1>
+      <span>{{ counter }}</span>
+    </div>
+    <button onclick="vm.resetCounter()">Reset</button>
+  </body>
 
-<script src="vue.js"></script>
-<!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script> -->
+  <script src="vue.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script> -->
 
-<script>
-	const vm = new Vue({
-		el: "#app",
-		data: {
-			msg: "Hello",
-			counter: 0
-		},
-		created() {
-			console.log("created")
-		},
-		mounted() {
-			console.log("mounted")
-		},
-		methods: {
-			addCounter() {
-				this.counter++;
-			}
-		}
-	});
-</script>
-
+  <script>
+    const vm = new Vue({
+      el: "#app",
+      data: {
+        msg: "Hello",
+        counter: 0,
+      },
+      created() {
+        console.log("created");
+      },
+      mounted() {
+        console.log("mounted");
+        setInterval(() => this.counter++, 250);
+      },
+      methods: {
+        addCounter() {
+          this.counter++;
+        },
+        resetCounter() {
+          this.counter = 0;
+        },
+      },
+    });
+  </script>
 </html>
