@@ -1,6 +1,6 @@
 class Vue {
   constructor(config) {
-    this.el = document.querySelector(config.el);
+    this.$el = document.querySelector(config.el);
     this.$data = config.data;
 
     if (config.mounted) {
@@ -9,14 +9,26 @@ class Vue {
 
     config.created?.();
 
+    walkMethods(this, config.methods);
+
     const render = renderVue(this);
     render();
 
     walkDataProps(this, render);
-    walkMethods(this, config.methods);
+
     this.$mount?.();
   }
 }
+
+//#region regex
+
+const regex = {
+  vueOn: /(@|v-on:)\w+="([0-z.?]+)\(?\)?"/,
+  eventAtt: /vue-event(=""?)/,
+  mostach: /\{\{((?:.|\r?\n)+?)\}\}/,
+};
+
+//#endregion
 
 //#region rendering
 
@@ -26,16 +38,53 @@ class Vue {
  * @returns {() => void}
  */
 function renderVue(vue) {
-  const originalInnerHTML = vue.el.innerHTML;
+  const initialTemplate = addAttributes(vue.$el.cloneNode(true));
 
   return () => {
     const { $data } = vue;
+    const template = initialTemplate.cloneNode(true);
+    const states = template.querySelectorAll("[state]");
 
-    vue.el.innerHTML = originalInnerHTML.replace(
-      /\{\{((?:.|\r?\n)+?)\}\}/g,
-      (_, val) => $data[val.trim()]
-    );
+    states.forEach((el) => {
+      const { innerHTML } = el;
+      el.innerHTML = innerHTML.replace(
+        regex.mostach,
+        (_, val) => $data[val.trim()]
+      );
+    });
+
+    vue.$el.innerHTML = "";
+    for (const child of template.children) {
+      vue.$el.appendChild(child.cloneNode(true));
+    }
+    addEvents(vue);
   };
+}
+
+function addEvents(vue) {
+  vue.$el.querySelectorAll("[vue-event]").forEach(el => {
+    const {name, value: method} = el.attributes[1];
+    const event = /@/.test(name) ? name.slice(1) : name.split(":")[1];
+    el.addEventListener(event, vue[method].bind(vue.$data));
+  })
+}
+
+function addAttributes(el) {
+  const { vueOn, mostach } = regex;
+
+  const template = el;
+
+  template.innerHTML = el.innerHTML.replace(
+    new RegExp(`${vueOn.source}|(>${mostach.source})`, "g"),
+    (match) => {
+      if (mostach.test(match)) {
+        return ` state ${match}`;
+      }
+      return `vue-event ${match}`;
+    }
+  );
+
+  return template;
 }
 
 //#endregion

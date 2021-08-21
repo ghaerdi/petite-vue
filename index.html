@@ -10,9 +10,10 @@
   <body>
     <div id="app">
       <h1>{{ msg }}</h1>
-      <span>{{ counter }}</span>
+      <h1>{{ counter }}</h1>
+      <button v-on:click="addCounter">Add</button>
+      <button @click="resetCounter">Reset</button>
     </div>
-    <button onclick="vm.resetCounter()">Reset</button>
   </body>
 
   <script src="vue.js"></script>
@@ -30,7 +31,6 @@
       },
       mounted() {
         console.log("mounted");
-        setInterval(() => this.counter++, 250);
       },
       methods: {
         addCounter() {
