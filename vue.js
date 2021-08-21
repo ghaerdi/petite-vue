@@ -1,6 +1,6 @@
 class Vue {
   constructor(config) {
-    this.el = document.querySelector(config.el);
+    this.$el = document.querySelector(config.el);
     this.$data = config.data;
 
     if (config.mounted) {
@@ -9,14 +9,25 @@ class Vue {
 
     config.created?.();
 
+    walkMethods(this, config.methods);
+
     const render = renderVue(this);
     render();
 
     walkDataProps(this, render);
-    walkMethods(this, config.methods);
     this.$mount?.();
   }
 }
+
+//#region regex
+
+const regex = {
+  vueOn: /(@|v-on:)\w+="([0-z.?]+)\(?\)?"/,
+  eventAtt: /vue-event(=""?)/,
+  mostach: /\{\{((?:.|\r?\n)+?)\}\}/,
+};
+
+//#endregion
 
 //#region rendering
 
@@ -26,16 +37,35 @@ class Vue {
  * @returns {() => void}
  */
 function renderVue(vue) {
-  const originalInnerHTML = vue.el.innerHTML;
+  const originalTemplate = addAttributes(vue.$el.cloneNode(true));
 
   return () => {
     const { $data } = vue;
 
-    vue.el.innerHTML = originalInnerHTML.replace(
-      /\{\{((?:.|\r?\n)+?)\}\}/g,
+    vue.$el.innerHTML = originalTemplate.innerHTML.replace(
+      new RegExp(regex.mostach, "g"),
       (_, val) => $data[val.trim()]
     );
+
+    addEvents(vue);
   };
+}
+
+function addEvents(vue) {
+  vue.$el.querySelectorAll("[vue-event]").forEach((el) => {
+    const { name, value: method } = el.attributes[1];
+    const event = /@/.test(name) ? name.slice(1) : name.split(":")[1];
+    el.addEventListener(event, vue[method].bind(vue.$data));
+  });
+}
+
+function addAttributes(el) {
+  el.innerHTML = el.innerHTML.replace(
+    new RegExp(regex.vueOn, "g"),
+    (match) => `vue-event ${match}`
+  );
+
+  return el;
 }
 
 //#endregion
