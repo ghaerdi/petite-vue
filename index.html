@@ -10,9 +10,6 @@
   <body>
     <div id="app">
       <h1>{{ msg }}</h1>
-      <h1>{{ counter }}</h1>
-      <button v-on:click="addCounter">Add</button>
-      <button @click="resetCounter">Reset</button>
     </div>
   </body>
 
@@ -24,22 +21,21 @@
       el: "#app",
       data: {
         msg: "Hello",
-        counter: 0,
       },
       created() {
-        console.log("created");
+        addElement("app", "created: {{ msg }}");
       },
       mounted() {
-        console.log("mounted");
-      },
-      methods: {
-        addCounter() {
-          this.counter++;
-        },
-        resetCounter() {
-          this.counter = 0;
-        },
+        addElement("app", "mounted: {{ msg }}");
+        this.msg += " world";
       },
     });
+
+    function addElement(id, text) {
+      const el = document.getElementById(id);
+      const div = document.createElement("DIV");
+      div.innerHTML = text;
+      el.appendChild(div);
+    }
   </script>
 </html>

@@ -1,21 +1,23 @@
 class Vue {
-  constructor(config) {
-    this.$el = document.querySelector(config.el);
-    this.$data = config.data;
+  constructor({ el, data, beforeCreate, created, mounted, methods }) {
+    beforeCreate?.bind(this)();
 
-    if (config.mounted) {
-      this.$mount = config.mounted;
-    }
+    this.$el = document.querySelector(el);
+    this.$data = data;
 
-    config.created?.();
+    walkDataProps(this);
+    walkMethods(this, methods);
 
-    walkMethods(this, config.methods);
+    created?.bind(this)();
 
     const render = renderVue(this);
+    walkDataProps(this, render);
     render();
 
-    walkDataProps(this, render);
-    this.$mount?.();
+    if (mounted) {
+      this.$mount = mounted;
+      this.$mount();
+    }
   }
 }
 
@@ -56,6 +58,11 @@ function addEvents(vue) {
     const { name, value: method } = el.attributes[1];
     const event = /@/.test(name) ? name.slice(1) : name.split(":")[1];
     el.addEventListener(event, vue[method].bind(vue.$data));
+
+    // TODO: Move removeAttr to function and make it better
+    el.removeAttribute("vue-event");
+    el.removeAttribute(`v-on:${event}`);
+    el.removeAttribute(`@${event}`);
   });
 }
 
@@ -95,6 +102,7 @@ function defineReactive(obj, key, cb, redefineData) {
   let value = obj.$data[key];
 
   Object.defineProperty(redefineData ? obj.$data : obj, key, {
+    configurable: true,
     get() {
       return value;
     },
