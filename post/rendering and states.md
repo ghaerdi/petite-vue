@@ -1,16 +1,13 @@
----
-title: "Code your own vue: rendering and states"
-published: true
-tags: javascript, vuejs, webdev, tutorial
----
-Hi everyone. Almost a year ago I started using vuejs and I like how simple it is to use this framework so I decided to code my own vuejs (v2).
+# Code your own vue: rendering and states
 
-In this post we going to see:
+Hi everyone. Almost a year ago I started using vuejs and I like how simple it is to use this framework so I decided to code my own vuejs.
+
+### In this post we going to see:
 - Render
 - States
 - Re-render when a state is updated
 
-### Setup
+## Setup
 
 The setup is simple to do, just create a new project with a html file and a js file. This is a part of my `index.html`:
 ```html
@@ -33,7 +30,7 @@ The setup is simple to do, just create a new project with a html file and a js f
 
 That's enough for now, you can close the file. I coded my vue on the `vue.js` file, I recommend you do the same.
 
-### Mount vue on the html element
+## Mount vue on the html element
 
 Create the Vue class, add the constructor that will receive the config and pass the information to the class. Like this:
 ```js
@@ -45,7 +42,7 @@ class Vue {
 }
 ```
 
-### Rendering
+## Rendering
 
 Here begins to be interesting.
 
@@ -55,7 +52,7 @@ function renderVue(Vue) {
   const { innerHTML } = el;
 
   Vue.el.innerHTML = innerHTML.replace(
-    // Regex to find mustachoes. 
+    // Regex to find mustachoes.
     /\{\{((?:.|\r?\n)+?)\}\}/g,
     // Get the value of the property and replace it.
     (_, val) => data[val.trim()]
@@ -67,7 +64,7 @@ This function read the `{{ msg }}` in the html file inside of the `#app` element
 
 Before opening the html file don't forget to call the function inside the constructor.
 
-### Make data reactive
+## Make data reactive
 
 Now, you may want update the data and show it in the web page, guess what, that going to be our next step.
 
@@ -106,11 +103,11 @@ For test it yourself just update the `this.data.msg` field after calling the fun
 
 It works! (I hope the same for you), but the page doesn't update to show the new value, this is the last thing that we going to see in this post.
 
-### Re-render
+## Re-render
 
 We already have a render function, you may figure out how we can render again the html: just calling the `renderVue` function instead of the `console.log`.
 
-Sounds easy but actually is not that easy. Witch moustaches should replace if they're already replaced after the first render? For solve that problem, all what we need to do is save a copy of the original `innerHTML` you can do it in different ways, I prefer edit the `renderVue` function and take advantage of [closures](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures).
+Sounds easy but actually is not that easy. Witch moustaches should replace if they're already replaced after the first render? For solve that problem, all what we need to do is save a copy of the original `innerHTML` you can do it in different ways, I prefer edit the `renderVue` function and take advantage of closures.
 
 ```js
 function renderVue(Vue) {
@@ -127,11 +124,11 @@ function renderVue(Vue) {
 }
 ```
 
-We are almost done. We need edit `defineReactive`, this function have a second parameter that receive a [callback](https://www.w3schools.com/js/js_callback.asp) replacing the `console.log` that I wrote before.
+We are almost done. We need edit `defineReactive`, this function have a second parameter that receive a callback replacing the `console.log` that I wrote before.
 
 To finish I declared a new variable with the return of `renderVue` and pass the new variable to `defineProperty`.
 
-### Conclusion
+## Conclusion
 
 We are done! After that you can update the data and the webpage going to render the new value. Now you have your own Vue, is not much but you can impress your friends with that (if you have).
 
@@ -179,6 +176,11 @@ function defineReactive(obj, cb) {
 }
 ```
 
-I hope you learned something new. We have some interesting features to discover about this topic, will I write more post about it? Maybe.
+I hope you learned something new. We have some interesting features to discover about this topic.
 
 For now, have a happy coding.
+
+## References
+
+- [closures](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures)
+- [callback](https://www.w3schools.com/js/js_callback.asp)

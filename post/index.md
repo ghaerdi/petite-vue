@@ -1,8 +1,4 @@
----
-title: "Code your own vue"
-published: true
-tags: javascript, vue, webdev, tutorial
----
+# Code your own vue
 
 Code your own vue is a series of post that is going to show you how create your own vue for learning purposes, the implementation of functionalities try to be most simple as can be.
 
@@ -19,10 +15,12 @@ Consider that I can be wrong or vue possibly handle some concepts in other ways,
 
 I want to be concise, but also I will add some references links to documentation if I use something that someone who start learning javascript may don't know.
 
-### Posts
+## Posts
 
 - [Rendering and states](https://dev.to/ghaerdi/make-your-own-vue-rendering-and-states-jb6)
 
-### Repository
 
-[code your own vue repo](https://github.com/ghaerdi/petite-vue)
+## Links
+
+- [petite-vue pepository](https://github.com/ghaerdi/petite-vue)
+- [Twitter](https://twitter.com/ghaerdi/)
