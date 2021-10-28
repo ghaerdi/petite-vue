@@ -10,10 +10,12 @@
   <body>
     <div id="app">
       <h1>{{ msg }}</h1>
+      <button v-on:click="hi">Click me</button>
     </div>
   </body>
 
-  <script src="vue.js"></script>
+  <!-- <script src="vue.js"></script> -->
+  <script src="tutorial.js"></script>
   <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script> -->
 
   <script>
@@ -22,20 +24,11 @@
       data: {
         msg: "Hello",
       },
-      created() {
-        addElement("app", "created: {{ msg }}");
-      },
-      mounted() {
-        addElement("app", "mounted: {{ msg }}");
-        this.msg += " world";
-      },
+      methods: {
+        hi() {
+          this.msg = this.msg === "Hello" ? "World" : "Hello";
+        }
+      }
     });
-
-    function addElement(id, text) {
-      const el = document.getElementById(id);
-      const div = document.createElement("DIV");
-      div.innerHTML = text;
-      el.appendChild(div);
-    }
   </script>
 </html>
