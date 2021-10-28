@@ -12,7 +12,7 @@ In this post we are going to see:
 
 ## Vue's lifecycle
 
-Before explaining the differences between methods, we need to know that each component or vue instance has a lifecycle.
+Before explaining the differences between both methods, we need to know that each component or vue instance has a lifecycle.
 
 A lifecycle in vue can be defined in different steps that initialize some functionalities, from create to mount and from mount to destroy. In the official vue's documentation we can find the next diagram about the lifecycle.
 
